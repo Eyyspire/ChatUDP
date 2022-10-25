@@ -11,6 +11,8 @@ public class ProtocolUDP extends Thread{
     private DatagramPacket packet;
     private String address;
     private Scanner scanner;
+    
+    private GUI gui;
 
     /**
      * Creates an instance of ProtocolUDP
@@ -31,9 +33,8 @@ public class ProtocolUDP extends Thread{
     /**
      * Sends a message
      */
-    public void send(){
+    public void send(String message){
         try{
-            String message = this.scanner.nextLine();
             InetAddress group = getGroup(address);
             byte[] buffer = message.getBytes();
             DatagramPacket p = new DatagramPacket(buffer, buffer.length, group, socket.getLocalPort());
@@ -54,7 +55,8 @@ public class ProtocolUDP extends Thread{
      * @throws IOException
      * @throws UnknownHostException
      */
-    public void joinGroup(String address) throws IOException, UnknownHostException{
+    @SuppressWarnings("deprecation")
+	public void joinGroup(String address) throws IOException, UnknownHostException{
         socket.joinGroup(getGroup(address));
     }
 
@@ -94,6 +96,7 @@ public class ProtocolUDP extends Thread{
      * Displays the message received
      */
     public void getMessage(){
+    	gui.getTextArea().append(String.format("%s : %s\n",this.packet.getAddress(), new String(this.packet.getData())));
         System.out.printf("%s : %s\n",this.packet.getAddress(), new String(this.packet.getData()));
     }
 
@@ -102,5 +105,9 @@ public class ProtocolUDP extends Thread{
      */
     public void close(){
         this.socket.close();
+    }
+    
+    public void setGui(GUI gui) {
+    	this.gui = gui;
     }
 }

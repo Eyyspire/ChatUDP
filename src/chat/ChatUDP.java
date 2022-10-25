@@ -1,31 +1,34 @@
 package chat;
 
-import java.io.*;
+import java.io.IOException;
+
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 public class ChatUDP{
-    public static void main(String args[]){
+    public static void main(String args[]) throws UnsupportedLookAndFeelException{
         String address = args[0];
         int port = Integer.parseInt(args[1]);
-        ProtocolUDP sender = new ProtocolUDP(address, port){
+        ProtocolUDP protocol = new ProtocolUDP(address, port){
             public void run(){
                 try{
                     this.joinGroup(address);
+                    System.out.println("fuhifuz");
                 } catch(IOException e){
-                    e.getMessage();
+                    System.out.println(e.getMessage());
                 }
                 while(true){
                     this.read();
                 }
             }
         };
-        ProtocolUDP receiver = new ProtocolUDP(address, port){
-            public void run(){
-                while(true){
-                    this.send();
-                }
-            }
-        };
-        sender.start();
-        receiver.start();
+        
+        GUI window = new GUI(protocol);
+        protocol.setGui(window);
+        UIManager.setLookAndFeel(new NimbusLookAndFeel());
+    	window.setVisible(true);
+    	
+    	protocol.start();
     }
 }

@@ -19,9 +19,13 @@ public class GUI extends JFrame {
 	JTextField textField;
 	JTextArea textArea;
 	
+	ProtocolUDP protocolUDP;
 	
-	public GUI() { 
+	public GUI(ProtocolUDP protocolUDP) { 
         super("Super tchat");
+        
+        this.protocolUDP = protocolUDP;
+        
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(600,400);
         this.setLocationRelativeTo(null);
@@ -32,7 +36,7 @@ public class GUI extends JFrame {
         contentPane.add(TextPrep(), BorderLayout.SOUTH);
         
         
-        textArea = new JTextArea("Push me !");
+        textArea = new JTextArea();
         textArea.setEditable(false);
         contentPane.add(textArea, BorderLayout.CENTER);
     }
@@ -43,7 +47,7 @@ public class GUI extends JFrame {
 		textField = new JTextField();
 		textPrep.add(textField, BorderLayout.CENTER);
 		
-		JButton btnPushMe = new JButton("Push me !");
+		JButton btnPushMe = new JButton("Send");
 		btnPushMe.setPreferredSize(new Dimension(100,50));
 		textPrep.add(btnPushMe, BorderLayout.EAST);
 		
@@ -52,18 +56,22 @@ public class GUI extends JFrame {
 		
 	}
 	
-	private void send() {
-		String text = String.format("%s\n", textField.getText());
-		textArea.append(text);
+private void send() {
+		String text;
+		if(!(text = textField.getText()).equals("")) {
+			textField.setText("");
+			protocolUDP.send(text);
+		}
+		
 	}
-    
-    public static void main(String[] args) throws Exception{
-    	
-    	UIManager.setLookAndFeel(new NimbusLookAndFeel());
-    	
-    	GUI window = new GUI();
-    	window.setVisible(true);
-    }
+
+	public JTextArea getTextArea() {
+		return this.textArea;
+	}
+	
+	public JTextField getTextField() {
+		return this.textField;
+	}
 
     
 }
